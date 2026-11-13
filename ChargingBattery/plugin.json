@@ -1,0 +1,13 @@
+{
+  "id": "chargingBattery",
+  "name": "Charging Battery",
+  "description": "Shows charging animation and percentage in the bar pill when plugged in",
+  "version": "1.0.0",
+  "author": "maxx",
+  "icon": "battery_charging_full",
+  "type": "widget",
+  "component": "./ChargingBattery.qml",
+  "settings": "./ChargingBatterySettings.qml",
+  "permissions": ["settings_read", "settings_write"]
+}
+
