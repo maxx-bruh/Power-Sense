@@ -1,5 +1,5 @@
 diff --git a/quickshell/Widgets/ClockContent.qml b/quickshell/Widgets/ClockContent.qml
-index e16e81a06..1fe026291 100644
+index e16e81a06..5cac17d86 100644
 --- a/quickshell/Widgets/ClockContent.qml
 +++ b/quickshell/Widgets/ClockContent.qml
 @@ -129,6 +129,134 @@ Item {
@@ -7,10 +7,10 @@ index e16e81a06..1fe026291 100644
              sourceComponent: root.dateFirst ? timeComponent : dateComponent
          }
 +
-+        // Phone-style green charging battery indicator (shows ONLY when plugged in / charging)
++        // Phone-style green charging battery indicator (shows ONLY on battery-equipped devices when plugged in / charging)
 +        Row {
 +            id: chargingIndicator
-+            visible: !root.vertical && (BatteryService.isCharging || BatteryService.isPluggedIn)
++            visible: !root.vertical && BatteryService.batteryAvailable && (BatteryService.isCharging || BatteryService.isPluggedIn)
 +            spacing: Theme.spacingXS
 +            opacity: visible ? 1.0 : 0.0
 +
