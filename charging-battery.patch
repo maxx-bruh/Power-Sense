@@ -1,0 +1,139 @@
+diff --git a/quickshell/Widgets/ClockContent.qml b/quickshell/Widgets/ClockContent.qml
+index e16e81a06..1fe026291 100644
+--- a/quickshell/Widgets/ClockContent.qml
++++ b/quickshell/Widgets/ClockContent.qml
+@@ -129,6 +129,134 @@ Item {
+             visible: active
+             sourceComponent: root.dateFirst ? timeComponent : dateComponent
+         }
++
++        // Phone-style green charging battery indicator (shows ONLY when plugged in / charging)
++        Row {
++            id: chargingIndicator
++            visible: !root.vertical && (BatteryService.isCharging || BatteryService.isPluggedIn)
++            spacing: Theme.spacingXS
++            opacity: visible ? 1.0 : 0.0
++
++            Behavior on opacity {
++                NumberAnimation { duration: 250 }
++            }
++
++            StyledText {
++                text: "•"
++                color: root.separatorColor
++                font.pixelSize: Theme.fontSizeSmall
++                anchors.verticalCenter: parent.verticalCenter
++            }
++
++            // Green battery capsule (iOS/phone style)
++            Item {
++                id: phoneBattery
++                readonly property real batWidth: 32
++                readonly property real batHeight: 14
++                readonly property int pct: Math.max(0, Math.min(100, Math.round(BatteryService.displayBatteryLevel)))
++
++                width: batWidth + 3
++                height: batHeight
++                anchors.verticalCenter: parent.verticalCenter
++
++                // Main rounded battery body
++                Rectangle {
++                    id: batBody
++                    width: phoneBattery.batWidth
++                    height: phoneBattery.batHeight
++                    radius: 4
++                    color: Theme.withAlpha("#22c55e", 0.25)
++                    border.width: 1
++                    border.color: Theme.withAlpha("#22c55e", 0.6)
++
++                    // Base layer: White text & bolt across empty/translucent track
++                    Row {
++                        id: baseLabels
++                        anchors.centerIn: parent
++                        spacing: 1
++
++                        StyledText {
++                            text: phoneBattery.pct
++                            font.pixelSize: 9
++                            font.weight: Font.Bold
++                            color: "#ffffff"
++                            anchors.verticalCenter: parent.verticalCenter
++                        }
++
++                        StyledText {
++                            text: "⚡"
++                            font.pixelSize: 9
++                            color: "#ffffff"
++                            anchors.verticalCenter: parent.verticalCenter
++
++                            SequentialAnimation on opacity {
++                                running: chargingIndicator.visible && root.live && !SettingsData.reduceMotion
++                                loops: Animation.Infinite
++                                NumberAnimation { to: 1.0; duration: 600; easing.type: Easing.InOutSine }
++                                NumberAnimation { to: 0.35; duration: 600; easing.type: Easing.InOutSine }
++                            }
++                        }
++                    }
++
++                    // Green fill representing current charge level
++                    Rectangle {
++                        id: batFill
++                        anchors.left: parent.left
++                        anchors.top: parent.top
++                        anchors.bottom: parent.bottom
++                        anchors.margins: 1
++                        radius: 3
++                        clip: true
++                        width: Math.max(0, Math.round((parent.width - 2) * (phoneBattery.pct / 100)))
++                        color: "#34d399"
++
++                        Behavior on width {
++                            NumberAnimation { duration: 400; easing.type: Easing.OutCubic }
++                        }
++
++                        // Clipped overlay layer: Black text & bolt on top of green fill
++                        Row {
++                            x: baseLabels.x - batFill.x
++                            y: baseLabels.y - batFill.y
++                            spacing: 1
++
++                            StyledText {
++                                text: phoneBattery.pct
++                                font.pixelSize: 9
++                                font.weight: Font.Bold
++                                color: "#0a0a0a"
++                                anchors.verticalCenter: parent.verticalCenter
++                            }
++
++                            StyledText {
++                                text: "⚡"
++                                font.pixelSize: 9
++                                color: "#0a0a0a"
++                                anchors.verticalCenter: parent.verticalCenter
++
++                                SequentialAnimation on opacity {
++                                    running: chargingIndicator.visible && root.live && !SettingsData.reduceMotion
++                                    loops: Animation.Infinite
++                                    NumberAnimation { to: 1.0; duration: 600; easing.type: Easing.InOutSine }
++                                    NumberAnimation { to: 0.35; duration: 600; easing.type: Easing.InOutSine }
++                                }
++                            }
++                        }
++                    }
++                }
++
++                // Battery terminal nub on the right
++                Rectangle {
++                    anchors.left: batBody.right
++                    anchors.leftMargin: 1
++                    anchors.verticalCenter: batBody.verticalCenter
++                    width: 2
++                    height: 5
++                    radius: 1
++                    color: Theme.withAlpha("#22c55e", 0.7)
++                }
++            }
++        }
+     }
+ 
+     Component {
