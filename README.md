@@ -90,4 +90,3 @@ The installer:
 
 Distributed under the [MIT License](LICENSE).
 # Power-Sense
-# Power-Sense
